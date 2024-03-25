@@ -1,0 +1,19 @@
+{
+  "name": "pokedex_node_new_vers",
+  "version": "1.0.0",
+  "description": "TP - Node JS Back Inter - Emeraude CHO LIN WING | Vincent AUBERGER",
+  "main": "boissonModel.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.8",
+    "knex": "^3.1.0",
+    "limdu": "^1.0.0",
+    "prompt-sync": "^4.2.0",
+    "prompt-sync-history": "^1.0.1",
+    "sqlite3": "^5.1.7"
+  }
+}

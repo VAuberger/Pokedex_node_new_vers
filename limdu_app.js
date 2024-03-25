@@ -1,10 +1,10 @@
 var limdu = require('limdu');
 const prompt = require("prompt-sync")({ sigint: true });
-const db = require('./boissonModel');
+const db = require('./pokemonModel');
 
 (async function() {
 
-	const boissons = await db.getAllBoissons()
+	const boissons = await db.getAllPokemons()
 	console.log(boissons)
 	// First, define our base classifier type (a multi-label classifier based on winnow):
 	var TextClassifier = limdu.classifiers.multilabel.BinaryRelevance.bind(0, {
@@ -26,14 +26,14 @@ const db = require('./boissonModel');
 
 	// Train and test:
 	intentClassifier.trainBatch([
-		{input: "Je veux boire un barcadi", output: "barcadi"},
-		{input: "Je veux boire un barcad", output: "barcadi"},
-		{input: "Je veux une boisson de barcadir", output: "barcadi"},
-		{input: "J'aime du barcardi", output: "barcadi"},
-		{input: "Je veux boire un captain morgan", output: "captain_morgan"},
-		{input: "J'aime du captain morgan", output: "captain_morgan"},
-		{input: "Je veux boire un old nick", output: "old_nick"},
-		{input: "J'aime du old nick", output: "old_nick"},
+		{input: "Donne moi les statistiques de mon pokemon", output: "statistiques"},
+		{input: "Donne moi les stats de mon pokemon", output: "statistiques"},
+		{input: "Je veux connaître les performances de mon pokemon", output: "statistiques"},
+		{input: "Je veux connaître l'évolution de mon pokemon", output: "evolution"},
+		{input: "il évolue en quoi ?", output: "evolution"},
+		{input: "C'est qui mon pokemon ?", output: "description"},
+		{input: "Donne moi plus d'informations sur mon pokemon", output: "description"},
+		{input: "Donne moi les prochaines évolutions de mon pokemon", output: "evolution"},
 	]);
 
 
@@ -45,27 +45,27 @@ const db = require('./boissonModel');
 
 	// Train and test:
 	intentClassifierAccept.trainBatch([
-		{input: "Je veux bien cette boisson", output: "oui"},
-		{input: "Donne moi !", output: "oui"},
-		{input: "je prends", output: "oui"},
+		{input: "Je veux bien le savoir", output: "oui"},
+		{input: "Avec plaisir", output: "oui"},
+		{input: "Oui", output: "oui"},
 		{input: "ok", output: "oui"},
-		{input: "je ne prends pas", output: "no"},
-		{input: "Non c'est trop chère", output: "non"},
+		{input: "je ne le veut pas", output: "non"},
+		{input: "Non, merci", output: "non"},
 		{input: "Non je veux pas", output: "non"},
-		{input: "Non sait pas !", output: "non"},
+		{input: "Non", output: "non"},
 	]);
 
 
 
 	console.log('Bonjour')
-	const rhum_want = prompt("Pouvez-vous me dire le rhum que vous souhaitez (Nick, Barcardi, Morgan) possible ?");
+	const rhum_want = prompt("Que puis-je pour toi ?");
 	predicted_response = intentClassifier.classify(rhum_want);
 
 	let current_boisson = null
 	// console.log('predicted_response', predicted_response)
 	for (boison of boissons) {
 		if (boison.name == predicted_response[0]) {
-			console.log("La boison", boison['name'], "est de", boison['price'], " EUR")
+			console.log("Le pokemon", boison['name'], "stats : ", boison['price'], " chacal")
 			current_boisson = boison 
 			break
 		}
