@@ -3,8 +3,8 @@
 const knex = require('knex')(require('./knexfile')['development']);
 
 // Create
-async function createPokemon(name, quantity, price) {
-  return await knex('Pokemon').insert({ name, quantity, price });
+async function createPokemon(name, height, weight) {
+  return await knex('Pokemon').insert({ name, height, weight });
 }
 
 // Read
@@ -18,7 +18,7 @@ async function getPokemonById(id) {
 
 // Update
 async function updatePokemon(id, quantity) {
-  return await knex('Pokemon').where({ id }).update({ quantity });
+  return await knex('Pokemon').where({ id }).update({ height });
 }
 
 // Delete

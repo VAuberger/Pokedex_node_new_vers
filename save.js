@@ -1,6 +1,7 @@
 // App.js - Utilisation des opérations CRUD avec Knex
 
 const db = require('./pokemonModel');
+const POKEAPI_BASE_URL = 'https://pokeapi.co/api/v2/pokemon/';
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
@@ -8,18 +9,18 @@ function getRandomInt(max) {
 
 async function main() {
   const Pokemon = {
-    'Pikachu': { qty: 10, price: 30},
-    'Tortank': { qty: 19, price: 10},
-    'old_nick': { qty: 5, price: 30},
+    'statistiques': { height: POKEAPI_BASE_URL + 'height/', weight: POKEAPI_BASE_URL + 'weight/'},
+    'evolution': { height: POKEAPI_BASE_URL + 'abilities/', weight: POKEAPI_BASE_URL + 'order/'},
+    'description': { height: POKEAPI_BASE_URL + 'species/', weight: POKEAPI_BASE_URL + 'types/'},
   }
 
-  for (boisson_name in Pokemon) {
-    await db.createBoisson(boisson_name, Pokemon[boisson_name].qty, Pokemon[boisson_name].price);
+  for (Pokemon_name in Pokemon) {
+    await db.createPokemon(Pokemon_name, Pokemon[Pokemon_name].height, Pokemon[Pokemon_name].weight);
   }
 
   // Read
-  const getAllPokemon = await db.getAllPokemon();
-  console.log('Tous les Pokemon :', getAllPokemon);
+  const getAllPokemons = await db.getAllPokemons();
+  console.log('Tous les Pokemon :', getAllPokemons);
 }
 
 main().catch(err => console.error(err));
