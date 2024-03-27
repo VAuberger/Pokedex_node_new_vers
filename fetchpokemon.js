@@ -60,17 +60,17 @@ async function fetchPokemon(pokemonName) {
       {input: "Non", output: "non"},
     ]);
     
-    const yesno = prompt(`Souhaitez-vous sauvegarder votre pokémon ? : ${pokemonName} ?`);
+    const yesno = prompt(`Souhaiteriez-vous enregistrer ${pokemonName} ?\n`);
     predicted_response = intentClassifierAccept.classify(yesno);
     if (predicted_response[0] == 'non') {
       console.log('Ok')
     } else {      
         await db_pokemon.createPokemon(pokemonData.id, pokemonData.name, pokemonData.types.map(type => type.type.name).join(', '), pokemonData.abilities.map(ability => ability.ability.name).join(', '));
-        const getAllPokemons = await db.getAllPokemons();
+        const getAllPokemons = await db_pokemon.getAllPokemons();
         console.log('Tous les Pokemon :', getAllPokemons);
     }
 
-    const analyse_pokemon = prompt('Que souhaitez-vous savoir sur votre pokemon')
+    const analyse_pokemon = prompt(`Que souhaitez-vous savoir sur votre ${pokemonName} ?\n`)
     predicted_response = intentClassifier.classify(analyse_pokemon);
     if(predicted_response[0] === "evolution") {
       'FDCFSE'
@@ -78,18 +78,18 @@ async function fetchPokemon(pokemonName) {
       const response = await axios.get(`https://pokeapi.co/api/v2/type/${pokemonData.types}`);
       pokemonData = response.data;
 
-      console.log("Here's a list of which types your pokémon is Very Effective against : ", pokemonData.damage_relations.map(double_damage_to => double_damage_to.double_damage_to.name).join("\r\n"));
+      console.log("Voici une liste avec l'ensemble des types envers lesquels vôtre pokémon est plus efficace : ", pokemonData.damage_relations.map(double_damage_to => double_damage_to.double_damage_to.name).join("\r\n"));
     } else if(predicted_response[0] === "statistiques") {
-      console.log('Pokemon Name:', pokemonData.name);
-      console.log('Height:', pokemonData.height);
-      console.log('Weight:', pokemonData.weight);
-      console.log('Type:', pokemonData.weight);
-      console.log('Abilities:', pokemonData.abilities.map(ability => ability.ability.name).join(', '));
+      console.log('Nom du Pokémon : ', pokemonData.name);
+      console.log('Taille : ', pokemonData.height);
+      console.log('Poids : ', pokemonData.weight);
+      console.log('Type : ', pokemonData.weight);
+      console.log('Capacités : ', pokemonData.abilities.map(ability => ability.ability.name).join(', '));
     }
 
     return pokemonData;
   } catch (error) {
-    console.error('Error fetching Pokémon data:', error.response ? error.response.data : error.message);
+    console.error('Pokémon introuvable : ', error.response ? error.response.data : error.message);
     throw error;
   }
 }
@@ -97,7 +97,7 @@ async function fetchPokemon(pokemonName) {
 // Automatisation de la demande du pokemon en input
 function askForPokemon() {
   return new Promise((resolve, reject) => {
-    rl.question('Which Pokémon do you want to analyze? ', (answer) => {
+    rl.question('Quel Pokémon souhaiteriez-vous analyser ?\n', (answer) => {
       resolve(answer);
     });
   });
@@ -109,7 +109,7 @@ async function main() {
     const pokemonName = await askForPokemon();
     await fetchPokemon(pokemonName);
   } catch (error) {
-    console.error('An error occurred:', error);
+    console.error('Une erreur !!! : ', error);
   } finally {
     rl.close();
   }
