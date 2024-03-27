@@ -4,8 +4,8 @@ const db = require('./pokemonModel');
 
 (async function() {
 
-	const boissons = await db.getAllPokemons()
-	console.log(boissons)
+	const Pokemons = await db.getAllPokemons()
+	console.log(Pokemons)
 	// First, define our base classifier type (a multi-label classifier based on winnow):
 	var TextClassifier = limdu.classifiers.multilabel.BinaryRelevance.bind(0, {
 		binaryClassifierType: limdu.classifiers.Winnow.bind(0, {retrain_count: 10})
@@ -36,7 +36,6 @@ const db = require('./pokemonModel');
 		{input: "Donne moi les prochaines évolutions de mon pokemon", output: "evolution"},
 	]);
 
-
 	// Initialize a classifier with the base classifier type and the feature extractor:
 	var intentClassifierAccept = new limdu.classifiers.EnhancedClassifier({
 		classifierType: TextClassifier,
@@ -63,10 +62,10 @@ const db = require('./pokemonModel');
 
 	let current_boisson = null
 	// console.log('predicted_response', predicted_response)
-	for (boison of boissons) {
-		if (boison.name == predicted_response[0]) {
-			console.log("Le pokemon", boison['name'], "stats : ", boison['price'], " chacal")
-			current_boisson = boison 
+	for (Pokemon of Pokemons) {
+		if (Pokemon.name == predicted_response[0]) {
+			console.log("Le pokemon", Pokemon['name'], "stats : ", Pokemon['price'], " chacal")
+			current_boisson = Pokemon 
 			break
 		}
 	}
@@ -81,7 +80,7 @@ const db = require('./pokemonModel');
 
 		const want_qty = prompt(`Avez-vous besoin de combien de ${current_boisson.name} ?`);
 		console.log(`Vous voulez ${Number(want_qty)} ${current_boisson.name}(s)`)
-		boisson_from_db = await db.getBoisonById(current_boisson.id)
+		boisson_from_db = await db.getPokemonById(current_boisson.id)
 		if ((boisson_from_db.quantity <= 0)) {
 			console.log(`Nous n'avons plus de ${boisson_from_db.name}!`)
 		} else if ((boisson_from_db.quantity - Number(want_qty)) <= 0) {
@@ -91,7 +90,7 @@ const db = require('./pokemonModel');
 			if (Number(want_qty) == 1) {
 				console.log('Ok merci prennez votre boisson!')
 			} else {
-				console.log('Ok merci prennez vos boissons!')
+				console.log('Ok merci prennez vos Pokemons!')
 			}
 		}
 	}

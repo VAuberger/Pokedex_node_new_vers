@@ -3,27 +3,27 @@
 const knex = require('knex')(require('./knexfile')['development']);
 
 // Create
-async function createPokemon(name, height, weight) {
-  return await knex('Pokemon').insert({ name, height, weight });
+async function createPokemon(pokedex_id_entry, name, types, abilities) {
+  return await knex('pokemons').insert({ pokedex_id_entry, name, types, abilities });
 }
 
 // Read
 async function getAllPokemons() {
-  return await knex.select().from('Pokemon');
+  return await knex.select().from('pokemons');
 }
 
 async function getPokemonById(id) {
-  return await knex('Pokemon').where({ id }).first();
+  return await knex('pokemons').where({ id }).first();
 }
 
 // Update
 async function updatePokemon(id, quantity) {
-  return await knex('Pokemon').where({ id }).update({ height });
+  return await knex('pokemons').where({ id }).update({ height });
 }
 
 // Delete
 async function deletPokemon(id) {
-  return await knex('Pokemon').where({ id }).del();
+  return await knex('pokemons').where({ id }).del();
 }
 
 module.exports = {
