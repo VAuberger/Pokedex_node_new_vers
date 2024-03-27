@@ -47,6 +47,8 @@ async function fetchPokemon(pokemonName) {
       {input: "Mon type de pokemon il bat quel type de pokemons", output: "forces_faiblesses"},
       {input: "Mon pokémon il est fort contre qui", output: "forces_faiblesses"},
       {input: "Donne moi les prochaines évolutions de mon pokemon", output: "evolution"},
+      {input: "Retirer un pokemon de mon pokedex", output: "delete_pokemon"},
+      {input: "Je veux voir mon pokedex", output: "consult_pokedex"},
     ]);
 
     intentClassifierAccept.trainBatch([
@@ -54,30 +56,30 @@ async function fetchPokemon(pokemonName) {
       {input: "Avec plaisir", output: "oui"},
       {input: "Oui", output: "oui"},
       {input: "ok", output: "oui"},
-      {input: "je ne le veut pas", output: "non"},
+      {input: "je ne le veux pas", output: "non"},
       {input: "Non, merci", output: "non"},
       {input: "Non je veux pas", output: "non"},
       {input: "Non", output: "non"},
     ]);
     
-    const yesno = prompt(`Souhaiteriez-vous enregistrer ${pokemonName} ?\n`);
+    const yesno = prompt(`Souhaiteriez-vous enregistrer ${pokemonName} ? `);
     predicted_response = intentClassifierAccept.classify(yesno);
-    if (predicted_response[0] == 'non') {
-      console.log('Ok')
+    if (predicted_response[0] == 'oui') {
+      await db_pokemon.createPokemon(pokemonData.id, pokemonData.name, pokemonData.types.map(type => type.type.name).join(', '), pokemonData.abilities.map(ability => ability.ability.name).join(', '));
+      console.log(`Votre ${pokemonName} a été transféré au Professeur. `)
     } else {      
-        await db_pokemon.createPokemon(pokemonData.id, pokemonData.name, pokemonData.types.map(type => type.type.name).join(', '), pokemonData.abilities.map(ability => ability.ability.name).join(', '));
-        const getAllPokemons = await db_pokemon.getAllPokemons();
-        console.log('Tous les Pokemon :', getAllPokemons);
+        console.log(`Le pokémon n'a pas été sauvegardé.`)
     }
 
-    const analyse_pokemon = prompt(`Que souhaitez-vous savoir sur votre ${pokemonName} ?\n`)
+    const analyse_pokemon = prompt(`Que souhaitez-vous savoir sur votre ${pokemonName} ? `)
     predicted_response = intentClassifier.classify(analyse_pokemon);
     if(predicted_response[0] === "evolution") {
-      'FDCFSE'
+      const response = await axios.get(`https://pokeapi.co/api/v2/evolution-chain/${pokemonData.name}`);
+      pokemonData = response.data;
+      console.log('Evolutions : ', pokemonData.chain.map(evolves_to => evolves_to.evolves_to.name).join(', '));
     } else if(predicted_response[0] === "forces_faiblesses") {
       const response = await axios.get(`https://pokeapi.co/api/v2/type/${pokemonData.types}`);
       pokemonData = response.data;
-
       console.log("Voici une liste avec l'ensemble des types envers lesquels vôtre pokémon est plus efficace : ", pokemonData.damage_relations.map(double_damage_to => double_damage_to.double_damage_to.name).join("\r\n"));
     } else if(predicted_response[0] === "statistiques") {
       console.log('Nom du Pokémon : ', pokemonData.name);
@@ -85,6 +87,12 @@ async function fetchPokemon(pokemonName) {
       console.log('Poids : ', pokemonData.weight);
       console.log('Type : ', pokemonData.weight);
       console.log('Capacités : ', pokemonData.abilities.map(ability => ability.ability.name).join(', '));
+    } else if(predicted_response[0] === "consult_pokedex") {
+      const getAllPokemons = await db_pokemon.getAllPokemons();
+      console.log(`Voici tous vos pokémons actuellement stockés dans le pokédex :`, getAllPokemons)
+    } else if(predicted_response[0] === "delete_pokemon") {
+      const getAllPokemons = await db_pokemon.deletPokemon(pokemonData.id);
+      console.log(`Nombre de pokémon(s) retirés :`, getAllPokemons)
     }
 
     return pokemonData;
@@ -97,6 +105,7 @@ async function fetchPokemon(pokemonName) {
 // Automatisation de la demande du pokemon en input
 function askForPokemon() {
   return new Promise((resolve, reject) => {
+    console.log('Bonjour BourgPalette Man');
     rl.question('Quel Pokémon souhaiteriez-vous analyser ?\n', (answer) => {
       resolve(answer);
     });

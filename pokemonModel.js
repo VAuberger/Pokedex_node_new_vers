@@ -22,8 +22,8 @@ async function updatePokemon(id, quantity) {
 }
 
 // Delete
-async function deletPokemon(id) {
-  return await knex('pokemons').where({ id }).del();
+async function deletPokemon(pokedex_id_entry) {
+  return await knex('pokemons').where({ pokedex_id_entry }).del();
 }
 
 module.exports = {
